@@ -1,0 +1,16 @@
+Home page
+Login/Signup
+
+For teachers
+Teacher dashboard
+List of groups
+List of assignments
+List of questions
+
+
+For students
+Student dashboard
+List of groups
+List of assignments in one group
+List of questions in one assignment
+One question
