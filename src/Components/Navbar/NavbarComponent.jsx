@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 export default function NavbarComponent() {
-  return (
-    <div>
-      Navbar
-    </div>
-  )
+    return (
+        <div>
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/signUp">Sign Up</NavLink>
+        </div>
+    )
 }
