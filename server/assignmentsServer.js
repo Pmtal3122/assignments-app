@@ -1,7 +1,7 @@
 const { Client } = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const express = require('express')
@@ -35,6 +35,7 @@ app.post('/insertQuestion', (req, res) => {
 
     let repeatCheck = false;
     while (repeatCheck === false) {
+        // eslint-disable-next-line no-loop-func
         client.query(`select * from questions where qid = ${qid}`, (err, res) => {
             if (!err) {
                 if (res.rows === 0) repeatCheck = true;
@@ -59,7 +60,7 @@ app.post('/insertQuestion', (req, res) => {
     return "insertQuestion Exited";
 })
 
-app.get('/signUpStudent', (req, res) => {
+app.get('/signUpStudent', async (req, res) => {
     console.log("Request accepted for Student");
     console.log(req.query.loginData);
     const loginData = req.query.loginData;
@@ -68,22 +69,37 @@ app.get('/signUpStudent', (req, res) => {
     let email = loginData.email;
     let pwd = loginData.password;
 
-    bcrypt.hash(pwd, saltRounds, (err, password) => {
+    await bcrypt.hash(pwd, saltRounds, async(err, password) => {
         if (err) console.log("Error hashing passowrd");
         console.log("Password after hashing: " + password);
 
-        client.connect((err, res) => {
+        await client.connect((err, resp) => {
             if (!err) console.log("Connection successful");
             else {
                 console.log("Connection failed");
             }
         })
 
+        //Check whether account exists
+        await client.query(`select * from students where email = '${email}'`, async (err, resp) => {
+            console.log(resp);
+            if (resp.rowCount !== 0) {
+                console.log("Account already exists");
+                res.send(`<p>Account present</p>`);
+            }
+            else {
+                const query = `insert into students (name, email, password) values('${name}', '${email}', '${password}')`;
+                await client.query(query, (err, res) => {
+                    if (!err) console.log("Insertion of student account successful");
+                    else console.log("Insertion of student account failed");
+                })
+            }
+        })
     })
 
 })
 
-app.get('/signUpTeacher', (req, res) => {
+app.get('/signUpTeacher', async (req, res) => {
     console.log("Request accepted for Teacher");
     const loginData = req.query.loginData;
 
@@ -91,14 +107,29 @@ app.get('/signUpTeacher', (req, res) => {
     let email = loginData.email;
     let pwd = loginData.password;
 
-    bcrypt.hash(pwd, saltRounds, (err, password) => {
+    await bcrypt.hash(pwd, saltRounds, async (err, password) => {
         if (err) console.log("Error hashing passowrd");
         console.log("Password after hashing: " + password);
 
-        client.connect((err, res) => {
+        await client.connect((err, res) => {
             if (!err) console.log("Connection successful");
             else {
                 console.log("Connection failed");
+            }
+        })
+
+        //Check whether account exists
+        await client.query(`select * from teachers where email = '${email}'`, async (err, resp) => {
+            if (resp.rowCount !== 0) {
+                console.log("Account already exists");
+                res.send(`<p>Account already present</p>`);
+            }
+            else {
+                const query = `insert into teachers (name, email, password) values('${name}', '${email}', '${password}')`;
+                await client.query(query, (err, res) => {
+                    if (!err) console.log("Insertion of student account successful");
+                    else console.log("Insertion of student account failed");
+                })
             }
         })
     })
