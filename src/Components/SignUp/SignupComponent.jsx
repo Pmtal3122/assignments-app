@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
 import styles from './signupComponentStyles.module.css'
+import axios from 'axios';
 
 export default function SignupComponent() {
     const studentSelector = useRef();
@@ -24,10 +25,41 @@ export default function SignupComponent() {
         }
     }
 
-    function formSubmit(event) {
+    async function formSubmit(event) {
         event.preventDefault();
         console.log("Form submitted");
         console.log(event.target);
+        const loginData = {
+            name: name,
+            email: email,
+            password: password
+        }
+        console.log(loginData);
+
+        const selector = document.querySelector(`.${styles.active}`);
+        console.log(selector.innerText);
+
+        //Now segregate whether to sign up for student or for teacher
+
+        if (selector.innerText === "Student") {
+            await axios.get("http://127.0.0.1:5000/signUpStudent", {
+                params: {
+                    loginData: loginData
+                }
+            })
+                .then((res) => console.log(res))
+                .catch((err) => console.log(err))
+        }
+        else {
+            await axios.get("http://127.0.0.1:5000/signUpTeacher", {
+                params: {
+                    loginData: loginData
+                }
+            })
+                .then((res) => console.log(res))
+                .catch((err) => console.log(err))
+        }
+
     }
 
     return (
