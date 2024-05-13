@@ -89,8 +89,11 @@ app.get('/signUpStudent', async (req, res) => {
             }
             else {
                 const query = `insert into students (name, email, password) values('${name}', '${email}', '${password}')`;
-                await client.query(query, (err, res) => {
-                    if (!err) console.log("Insertion of student account successful");
+                await client.query(query, (err, resp) => {
+                    if (!err) {
+                        console.log("Insertion of student account successful");
+                        res.send(name);
+                    }
                     else console.log("Insertion of student account failed");
                 })
             }
@@ -126,8 +129,11 @@ app.get('/signUpTeacher', async (req, res) => {
             }
             else {
                 const query = `insert into teachers (name, email, password) values('${name}', '${email}', '${password}')`;
-                await client.query(query, (err, res) => {
-                    if (!err) console.log("Insertion of student account successful");
+                await client.query(query, (err, resp) => {
+                    if (!err) {
+                        console.log("Insertion of student account successful");
+                        res.send(name);
+                    }
                     else console.log("Insertion of student account failed");
                 })
             }
