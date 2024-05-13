@@ -141,4 +141,14 @@ app.get('/signUpTeacher', async (req, res) => {
     })
 })
 
+app.get('/loginStudent', async (req, res) => {
+    console.log(req.query.loginData);
+    res.send("Received request for student login");
+})
+
+app.get('/loginTeacher', async (req, res) => {
+    console.log(req.query.loginData);
+    res.send("Received request for teacher login");
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
 import styles from './loginComponentStyles.module.css'
+import axios from 'axios';
 
 export default function LoginComponent() {
   const studentSelector = useRef();
@@ -23,10 +24,29 @@ export default function LoginComponent() {
     }
   }
 
-  function formSubmit(event) {
+  async function formSubmit(event) {
     event.preventDefault();
     console.log("Form submitted");
     console.log(event.target);
+
+    const loginData = {
+      email: email,
+      password: password
+    }
+
+    const selector = document.querySelector(`.${styles.active}`);
+
+    await axios.get(`http://127.0.0.1:5000/login${selector.innerText}`, {
+      params: {
+        loginData: loginData
+      }
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 
   return (
