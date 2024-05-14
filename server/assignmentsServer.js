@@ -69,7 +69,7 @@ app.get('/signUpStudent', async (req, res) => {
     let email = loginData.email;
     let pwd = loginData.password;
 
-    await bcrypt.hash(pwd, saltRounds, async(err, password) => {
+    await bcrypt.hash(pwd, saltRounds, async (err, password) => {
         if (err) console.log("Error hashing passowrd");
         console.log("Password after hashing: " + password);
 
@@ -143,12 +143,117 @@ app.get('/signUpTeacher', async (req, res) => {
 
 app.get('/loginStudent', async (req, res) => {
     console.log(req.query.loginData);
-    res.send("Received request for student login");
+    const { email, password } = req.query.loginData;
+
+    let response = {};
+
+    //Connect client
+    client.connect((err, resp) => {
+        if (!err) {
+            console.log("Connection to db successful");
+        }
+        else {
+            console.log("Connection to db failed");
+            response.message = "Connection to db failed";
+            res.send(response);
+        }
+    })
+
+    //Check whether account is present
+    client.query(`select * from students where email = '${email}'`, (err, resp) => {
+        if (!err) {
+            console.log(resp.rows);
+            //If there are no rows with the input email, account does not exist
+            if (resp.rowCount === 0) {
+                console.log("Account does not exist");
+                response.message = "Account does not exist";
+                res.send(response);
+            }
+
+
+            //If there is indeed an account
+            else {
+
+                //Compare the input password and the stored password
+                bcrypt.compare(password, resp.rows[0].password, (err1, result) => {
+                    if (err1) console.log("Error comparing password");
+                    if (result) {
+                        console.log("Passwords match!");
+                        response.account = {
+                            type: "Student",
+                            id: resp.rows[0].student_id,
+                            name: resp.rows[0].name
+                        }
+                        console.log("Response: " + response);
+                        res.send(response);
+                    }
+                    else {
+                        console.log("Passwords do not match");
+                        response.message = "Passwords do not match";
+                        res.send(response);
+                    }
+                });
+            }
+        }
+        else console.log(err);
+    })
 })
 
 app.get('/loginTeacher', async (req, res) => {
     console.log(req.query.loginData);
-    res.send("Received request for teacher login");
+    const { email, password } = req.query.loginData;
+
+    let response = {};
+
+    //Connect client
+    client.connect((err, resp) => {
+        if (!err) {
+            console.log("Connection to db successful");
+        }
+        else {
+            console.log("Connection to db failed");
+            response.message = "Connection to db failed";
+            res.send(response);
+        }
+    })
+
+    //Check whether account is present
+    client.query(`select * from teachers where email = '${email}'`, (err, resp) => {
+        if (!err) {
+            console.log(resp.rows);
+            //If there are no rows with the input email, account does not exist
+            if (resp.rowCount === 0) {
+                console.log("Account does not exist");
+                response.message = "Account does not exist";
+                res.send(response);
+            }
+
+            //If there is indeed an account
+            else {
+
+                //Compare the input password and the stored password
+                bcrypt.compare(password, resp.rows[0].password, (err1, result) => {
+                    if (err1) console.log("Error comparing password");
+                    if (result) {
+                        console.log("Passwords match!");
+                        response.account = {
+                            type: "Teacher",
+                            id: resp.rows[0].teacher_id,
+                            name: resp.rows[0].name
+                        }
+                        console.log("Response: " + response);
+                        res.send(response);
+                    }
+                    else {
+                        console.log("Passwords do not match");
+                        response.message = "Passwords do not match";
+                        res.send(response);
+                    }
+                });
+            }
+        }
+        else console.log(err);
+    })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { useRef } from 'react';
 import styles from './loginComponentStyles.module.css'
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 export default function LoginComponent() {
   const studentSelector = useRef();
   const teacherSelector = useRef();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   function studentSelected() {
     if (!studentSelector.current.classList.contains(styles.active)) {
@@ -42,7 +44,8 @@ export default function LoginComponent() {
       }
     })
     .then((res) => {
-      console.log(res);
+      console.log(res.data);
+      navigate('/');
     })
     .catch((err) => {
       console.log(err);

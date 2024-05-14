@@ -6,6 +6,12 @@ Teacher dashboard
 List of groups
 List of assignments
 List of questions
+ + Add / Remove groups
+ + Add / Remove students to groups
+ + Add / Remove assignments to groups
+ + Add / Remove / Edit questions to assignments
+ + Add / Remove / Edit marks to answers
+
 
 
 For students
