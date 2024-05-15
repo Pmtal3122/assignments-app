@@ -21,17 +21,22 @@ const client = new Client({
     database: 'assignmentsdb'
 });
 
+//Connect client
+client.connect((err, resp) => {
+    if (!err) {
+        console.log("Connection to db successful");
+    }
+    else {
+        console.log("Connection to db failed");
+    }
+})
+
 app.post('/insertQuestion', (req, res) => {
     console.log("Inside insertQuestion");
     console.log(req.body);
     const { questionText, questionMarks } = req.body;
 
     let qid = Math.floor(Math.random() * 100);
-
-    client.connect((err, res) => {
-        if (!err) console.log("Connected successfully");
-        else console.log("Connection failed");
-    })
 
     let repeatCheck = false;
     while (repeatCheck === false) {
@@ -69,19 +74,12 @@ app.get('/signUpStudent', async (req, res) => {
     let email = loginData.email;
     let pwd = loginData.password;
 
-    await bcrypt.hash(pwd, saltRounds, async (err, password) => {
+    bcrypt.hash(pwd, saltRounds, (err, password) => {
         if (err) console.log("Error hashing passowrd");
         console.log("Password after hashing: " + password);
 
-        await client.connect((err, resp) => {
-            if (!err) console.log("Connection successful");
-            else {
-                console.log("Connection failed");
-            }
-        })
-
         //Check whether account exists
-        await client.query(`select * from students where email = '${email}'`, async (err, resp) => {
+        client.query(`select * from students where email = '${email}'`, (err, resp) => {
             console.log(resp);
             if (resp.rowCount !== 0) {
                 console.log("Account already exists");
@@ -89,15 +87,15 @@ app.get('/signUpStudent', async (req, res) => {
             }
             else {
                 const query = `insert into students (name, email, password) values('${name}', '${email}', '${password}')`;
-                await client.query(query, (err, resp) => {
+                client.query(query, (err, resp) => {
                     if (!err) {
                         console.log("Insertion of student account successful");
                         res.send(name);
                     }
                     else console.log("Insertion of student account failed");
-                })
+                });
             }
-        })
+        });
     })
 
 })
@@ -110,34 +108,27 @@ app.get('/signUpTeacher', async (req, res) => {
     let email = loginData.email;
     let pwd = loginData.password;
 
-    await bcrypt.hash(pwd, saltRounds, async (err, password) => {
+    bcrypt.hash(pwd, saltRounds, (err, password) => {
         if (err) console.log("Error hashing passowrd");
         console.log("Password after hashing: " + password);
 
-        await client.connect((err, res) => {
-            if (!err) console.log("Connection successful");
-            else {
-                console.log("Connection failed");
-            }
-        })
-
         //Check whether account exists
-        await client.query(`select * from teachers where email = '${email}'`, async (err, resp) => {
+        client.query(`select * from teachers where email = '${email}'`, (err, resp) => {
             if (resp.rowCount !== 0) {
                 console.log("Account already exists");
                 res.send(`<p>Account already present</p>`);
             }
             else {
                 const query = `insert into teachers (name, email, password) values('${name}', '${email}', '${password}')`;
-                await client.query(query, (err, resp) => {
+                client.query(query, (err, resp) => {
                     if (!err) {
                         console.log("Insertion of student account successful");
                         res.send(name);
                     }
                     else console.log("Insertion of student account failed");
-                })
+                });
             }
-        })
+        });
     })
 })
 
@@ -146,18 +137,7 @@ app.get('/loginStudent', async (req, res) => {
     const { email, password } = req.query.loginData;
 
     let response = {};
-
-    //Connect client
-    client.connect((err, resp) => {
-        if (!err) {
-            console.log("Connection to db successful");
-        }
-        else {
-            console.log("Connection to db failed");
-            response.message = "Connection to db failed";
-            res.send(response);
-        }
-    })
+    response.login = false;
 
     //Check whether account is present
     client.query(`select * from students where email = '${email}'`, (err, resp) => {
@@ -170,10 +150,8 @@ app.get('/loginStudent', async (req, res) => {
                 res.send(response);
             }
 
-
             //If there is indeed an account
             else {
-
                 //Compare the input password and the stored password
                 bcrypt.compare(password, resp.rows[0].password, (err1, result) => {
                     if (err1) console.log("Error comparing password");
@@ -184,6 +162,7 @@ app.get('/loginStudent', async (req, res) => {
                             id: resp.rows[0].student_id,
                             name: resp.rows[0].name
                         }
+                        response.login = true;
                         console.log("Response: " + response);
                         res.send(response);
                     }
@@ -204,18 +183,7 @@ app.get('/loginTeacher', async (req, res) => {
     const { email, password } = req.query.loginData;
 
     let response = {};
-
-    //Connect client
-    client.connect((err, resp) => {
-        if (!err) {
-            console.log("Connection to db successful");
-        }
-        else {
-            console.log("Connection to db failed");
-            response.message = "Connection to db failed";
-            res.send(response);
-        }
-    })
+    response.login = false;
 
     //Check whether account is present
     client.query(`select * from teachers where email = '${email}'`, (err, resp) => {
@@ -241,6 +209,7 @@ app.get('/loginTeacher', async (req, res) => {
                             id: resp.rows[0].teacher_id,
                             name: resp.rows[0].name
                         }
+                        response.login = true;
                         console.log("Response: " + response);
                         res.send(response);
                     }

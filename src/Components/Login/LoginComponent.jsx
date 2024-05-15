@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 export default function LoginComponent() {
   const studentSelector = useRef();
   const teacherSelector = useRef();
+  const message = useRef();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -45,7 +46,11 @@ export default function LoginComponent() {
     })
     .then((res) => {
       console.log(res.data);
-      navigate('/');
+      const login = res.data.login;
+      if(login) navigate('/');
+      else {
+        message.current.innerText = res.data.message;
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -67,6 +72,9 @@ export default function LoginComponent() {
 
         <input type="submit" value="submit" />
       </form>
+      <div id={styles.message} ref={message}>
+        {/* Enter message if required */}
+      </div>
     </div>
   )
 }
