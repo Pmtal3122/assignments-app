@@ -47,7 +47,16 @@ export default function LoginComponent() {
     .then((res) => {
       console.log(res.data);
       const login = res.data.login;
-      if(login) navigate('/');
+      if(login) {
+        navigate('/');
+        const accountData = {
+          accountType: selector.innerText,
+          accountId: res.data.account.id,
+          accountName: res.data.account.name
+        }
+        localStorage.setItem("accountData", JSON.stringify(accountData));
+        
+      }
       else {
         message.current.innerText = res.data.message;
       }
