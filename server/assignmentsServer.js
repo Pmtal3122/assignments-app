@@ -246,22 +246,22 @@ app.post('/addGroup', (req, res) => {
                 console.log(res0.rows[0].max);
                 console.log(typeof (res0.rows[0].max));
                 addGroupData.groupId = res0.rows[0].max + 1;
-
-                console.log("addGroupData after getting id");
-                console.log(addGroupData);
-
-                client.query(`insert into groups values (${addGroupData.groupId}, '${addGroupData.groupName}', '${addGroupData.groupDescription}', ${addGroupData.teacherId})`, (err2, res2) => {
-                    if (err2) {
-                        response.message = "Error while inserting data";
-                        res.send(response);
-                    }
-                    else {
-                        response.message = "Successfully added group";
-                        response.isAddedGroup = true;
-                        res.send(response);
-                    }
-                })
             }
+
+            console.log("addGroupData after getting id");
+            console.log(addGroupData);
+
+            client.query(`insert into groups values (${addGroupData.groupId}, '${addGroupData.groupName}', '${addGroupData.groupDescription}', ${addGroupData.teacherId})`, (err2, res2) => {
+                if (err2) {
+                    response.message = "Error while inserting data";
+                    res.send(response);
+                }
+                else {
+                    response.message = "Successfully added group";
+                    response.isAddedGroup = true;
+                    res.send(response);
+                }
+            })
         }
     })
 })

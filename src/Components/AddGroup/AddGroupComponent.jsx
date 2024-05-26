@@ -29,7 +29,8 @@ export default function AddGroupComponent() {
         await axios.post("http://127.0.0.1:5000/addGroup", addGroupData)
         .then((res) => {
             console.log(res.data);
-            navigate("/groups");
+            if(res.data.isAddedGroup) navigate("/groups");
+            else console.log("Not added group");
         })
         .catch((err) => {
             console.log(err);
