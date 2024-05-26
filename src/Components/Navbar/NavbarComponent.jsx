@@ -6,7 +6,7 @@ export default function NavbarComponent() {
     const navigate = useNavigate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        if(localStorage.getItem("accountData") !== null) {
+        if (localStorage.getItem("accountData") !== null) {
             setLoggedIn(() => true);
         }
     })
@@ -25,12 +25,13 @@ export default function NavbarComponent() {
                         <NavLink to="/login">Login</NavLink>
                         <NavLink to="/signUp">Sign Up</NavLink>
                     </div>
-                
-                :
+
+                    :
                     <div>
+                        <NavLink to="/groups">Groups</NavLink>
                         <button onClick={signOut}>Sign out</button>
                     </div>
-        }
+            }
         </>
     )
 }

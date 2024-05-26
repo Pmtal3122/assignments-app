@@ -4,6 +4,8 @@ import LoginComponent from '../Components/Login/LoginComponent';
 import SignupComponent from '../Components/SignUp/SignupComponent';
 import HomeComponent from '../Components/Home/HomeComponent';
 import NavbarComponent from '../Components/Navbar/NavbarComponent';
+import GroupsComponent from '../Components/Groups/GroupsComponent';
+import AddGroupComponent from '../Components/AddGroup/AddGroupComponent';
 
 
 export default function AssignmentRoutes() {
@@ -11,9 +13,12 @@ export default function AssignmentRoutes() {
     <Router>
       <NavbarComponent />
         <Routes>
-          <Route path='/' element={<HomeComponent />}></Route>
-          <Route path='/login' element={<LoginComponent />}></Route>
-          <Route path='/signUp' element={<SignupComponent />}></Route>
+          <Route path='/' element={<HomeComponent />} />
+          <Route path='/login' element={<LoginComponent />} />
+          <Route path='/signUp' element={<SignupComponent />} />
+          <Route path='/groups' element={<GroupsComponent />}>
+            <Route path='addGroup' element={<AddGroupComponent />} />
+          </Route>
         </Routes>
       </Router>
   )

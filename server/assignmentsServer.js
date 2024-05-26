@@ -225,4 +225,45 @@ app.get('/loginTeacher', async (req, res) => {
     })
 })
 
+app.post('/addGroup', (req, res) => {
+    console.log("Inside AddGroup");
+    let addGroupData = req.body;
+    addGroupData.groupId = 1;
+
+    let response = {
+        isAddedGroup: false
+    }
+
+    //Getting the maximum of the group_ids
+    client.query(`select max(group_id) as max from groups`, (err0, res0) => {
+        if (err0) {
+            console.log("Error receiving the maximum group id");
+            response.message = "Error receiving the maximum group id";
+            res.send(response);
+        }
+        else {
+            if (res0.rows[0].max !== null) {
+                console.log(res0.rows[0].max);
+                console.log(typeof (res0.rows[0].max));
+                addGroupData.groupId = res0.rows[0].max + 1;
+
+                console.log("addGroupData after getting id");
+                console.log(addGroupData);
+
+                client.query(`insert into groups values (${addGroupData.groupId}, '${addGroupData.groupName}', '${addGroupData.groupDescription}', ${addGroupData.teacherId})`, (err2, res2) => {
+                    if (err2) {
+                        response.message = "Error while inserting data";
+                        res.send(response);
+                    }
+                    else {
+                        response.message = "Successfully added group";
+                        response.isAddedGroup = true;
+                        res.send(response);
+                    }
+                })
+            }
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
