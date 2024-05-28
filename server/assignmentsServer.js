@@ -266,4 +266,27 @@ app.post('/addGroup', (req, res) => {
     })
 })
 
+app.get("/getGroups", (req, res) => {
+    console.log("Inside add groups");
+    const teacherId = req.query.teacherId;
+    console.log(teacherId);
+
+    const response = {
+        result: false
+    }
+
+    client.query(`select group_id, name, description from groups where teacher_id = ${teacherId}`, (err0, res0) => {
+        if(err0) {
+            response.message = "Error in getting groups information";
+            res.send(response);
+        }
+        else {
+            console.log(res0.rows);
+            response.groups = res0.rows;
+            response.result = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

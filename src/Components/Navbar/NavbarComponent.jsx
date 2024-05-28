@@ -19,6 +19,9 @@ export default function NavbarComponent() {
 
     return (
         <>
+        <div>
+            <NavLink to="/">Home</NavLink>
+        </div>
             {
                 loggedIn === false ?
                     <div>
