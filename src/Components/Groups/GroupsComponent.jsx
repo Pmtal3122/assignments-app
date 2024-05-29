@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 // import styles from './groupsComponentStyles.module.css';
 
 export default function GroupsComponent() {
@@ -13,6 +13,7 @@ export default function GroupsComponent() {
   const [type, setType] = useState("");
   const [groupsArray, setGroupsArray] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   useEffect(() => {
     let accountData = JSON.parse(localStorage.getItem("accountData"));
     setName(() => accountData.accountName);
@@ -32,7 +33,7 @@ export default function GroupsComponent() {
       }
     })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setGroupsArray(() => res.data.groups);
       })
       .catch((err) => {
@@ -42,8 +43,17 @@ export default function GroupsComponent() {
 
   function handleGroupClick(event) {
     // event.target.parentElement.firstChild This is how to get the group id
-    const groupId = event.target.parentElement.firstChild.innerText;
-    console.log("Group ID:" + groupId);
+    const groupId = event.target.parentElement.firstChild;
+    const groupName = groupId.nextSibling;
+    const groupDescription = groupName.nextSibling;
+
+    const groupData = {
+      groupId: Number(groupId.innerText),
+      groupName: groupName.innerText,
+      groupDescription: groupDescription.innerText
+    }
+
+    navigate("/group", {state: groupData})
   }
 
   return (
@@ -68,7 +78,7 @@ export default function GroupsComponent() {
           {/* Add the groups to list items */}
           {
             groupsArray.map((group) => (
-              <li style={{border: "1px solid red"}}>
+              <li key={group.group_id} style={{border: "1px solid red"}}>
                 <div>
                   <span>{group.group_id}</span>
                   <span>{group.name}</span>
