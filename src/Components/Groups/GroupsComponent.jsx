@@ -56,6 +56,24 @@ export default function GroupsComponent() {
     navigate("/group", {state: groupData})
   }
 
+  async function handleGroupDelete(event) {
+    event.preventDefault();
+    const groupId = event.target.parentElement.firstChild;
+    await axios.delete("http://127.0.0.1:5000/deleteGroup", {
+      params: {
+        groupId: groupId.innerText
+      }
+    })
+    .then((res) => {
+      console.log(res.data);
+      if(res.data.isDeleted === true)
+      navigate("/groups")
+    })
+    .catch((err) => {
+
+    })
+  }
+
   return (
     <div>
       <h1>Groups</h1>
@@ -84,6 +102,7 @@ export default function GroupsComponent() {
                   <span>{group.name}</span>
                   <span>{group.description}</span>
                   <button onClick={event => handleGroupClick(event)}>View Group</button>
+                  <button onClick={event => handleGroupDelete(event)}>Delete Group</button>
                 </div>
               </li>
             ))

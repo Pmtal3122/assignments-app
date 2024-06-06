@@ -289,4 +289,19 @@ app.get("/getGroups", (req, res) => {
     })
 })
 
+app.delete("/deleteGroup", (req, res) => {
+    const response = {
+        isDeleted: false
+    }
+
+    const groupId = req.query.groupId;
+    client.query(`delete from groups where group_id = ${groupId}`, (err0, res0) => {
+        if(!err0) {
+            response.isDeleted = true;
+            res.send(response);
+        }
+        else {res.send(response)}
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
