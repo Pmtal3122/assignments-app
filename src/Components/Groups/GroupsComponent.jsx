@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { Dialog, DialogTitle } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 // import styles from './groupsComponentStyles.module.css';
 
@@ -9,9 +10,12 @@ export default function GroupsComponent() {
   // 2. Add Groups
   // 3. Remove Groups
 
+  const deleteConfirmationDialog = useRef();
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [groupsArray, setGroupsArray] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [groupId, setGroupId] = useState(-1);
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
@@ -53,26 +57,51 @@ export default function GroupsComponent() {
       groupDescription: groupDescription.innerText
     }
 
-    navigate("/group", {state: groupData})
+    navigate("/group", { state: groupData })
   }
 
-  async function handleGroupDelete(event) {
+  function handleGroupDelete(event) {
     event.preventDefault();
-    const groupId = event.target.parentElement.firstChild;
+    setOpenDialog(true);
+    setGroupId(event.target.parentElement.firstChild.innerText);
+  }
+
+  async function handleDeleteConfirm() {
+    setOpenDialog(false);
     await axios.delete("http://127.0.0.1:5000/deleteGroup", {
       params: {
-        groupId: groupId.innerText
+        groupId: groupId
       }
     })
-    .then((res) => {
-      console.log(res.data);
-      if(res.data.isDeleted === true)
-      navigate("/groups")
-    })
-    .catch((err) => {
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.isDeleted === true)
+          navigate("/groups")
+      })
+      .catch((err) => {
 
-    })
+      })
   }
+
+  const divStyle = {
+    display: "flex",
+    felxDirection: "row",
+    position: "absolute",
+    right: "0px",
+    bottom: "0px",
+    // padding: "1rem",
+ };
+
+ const confirmButtonStyle = {
+  width: "5rem",
+  height: "1.5rem",
+  fontsize: "1rem",
+  backgroundColor: "grey",
+  color: "black",
+  margin: "5px",
+  borderRadius: "10px",
+  border: "1px solid black",
+};
 
   return (
     <div>
@@ -96,7 +125,7 @@ export default function GroupsComponent() {
           {/* Add the groups to list items */}
           {
             groupsArray.map((group) => (
-              <li key={group.group_id} style={{border: "1px solid red"}}>
+              <li key={group.group_id} style={{ border: "1px solid red" }}>
                 <div>
                   <span>{group.group_id}</span>
                   <span>{group.name}</span>
@@ -109,7 +138,17 @@ export default function GroupsComponent() {
           }
         </ol>
       </div>
+      <Dialog ref={deleteConfirmationDialog} open={openDialog}>
+        <DialogTitle>Confirm Dialog</DialogTitle>
+        <h3 style={{ marginTop: "-10px", padding: "5px 10px" }}>Are you sure to delete this item?{" "}</h3>
 
+        <br />
+
+        <div style={divStyle}>
+          <button style={confirmButtonStyle} onClick={handleDeleteConfirm}>Confirm</button>
+          <button style={confirmButtonStyle} onClick={(dialogStatus) => setOpenDialog(!dialogStatus)}>Cancel</button>
+        </div>
+      </Dialog>
       <Outlet /> {/*To render the child components*/}
     </div>
   )
