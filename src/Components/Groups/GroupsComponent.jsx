@@ -48,16 +48,7 @@ export default function GroupsComponent() {
   function handleGroupClick(event) {
     // event.target.parentElement.firstChild This is how to get the group id
     const groupId = event.target.parentElement.firstChild;
-    const groupName = groupId.nextSibling;
-    const groupDescription = groupName.nextSibling;
-
-    const groupData = {
-      groupId: Number(groupId.innerText),
-      groupName: groupName.innerText,
-      groupDescription: groupDescription.innerText
-    }
-
-    navigate("/group", { state: groupData })
+    navigate(`/group/${Number(groupId.innerText)}`)
   }
 
   function handleGroupDelete(event) {

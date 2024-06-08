@@ -1,13 +1,19 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { Outlet, useLocation, useParams } from 'react-router';
+import { NavLink } from 'react-router-dom';
 // import styles from './groupComponentStyles.module.css';
 
 export default function GroupComponent() {
-    const location = useLocation();
-    const groupData = location.state;
-    useEffect(() => {
-        // console.log("State: " + JSON.stringify(groupData));
-    }, [location, groupData])
+  /**
+   * Add Assignment
+   * Remove assignment
+   * Add students to group
+   */
+  const location = useLocation();
+  const {groupId} = useParams();
+  useEffect(() => {
+    // Get all the assignments
+  }, [location])
   return (
     <div>
       <div>
@@ -16,10 +22,22 @@ export default function GroupComponent() {
 
       {/* Display the details of the group */}
       <div>
-        <p>Group ID: {groupData.groupId}</p>
+        {/* <p>Group ID: {groupData.groupId}</p>
         <p>Group Name: {groupData.groupName}</p>
-        <p>Group Description: {groupData.groupDescription}</p>
+        <p>Group Description: {groupData.groupDescription}</p> */}
       </div>
+
+      {/* Add students to the group */}
+      <div>
+        <NavLink to={`/group/${groupId}/addStudentsToGroup`}>Add Students to Group</NavLink>
+      </div>
+
+      {/* Add assignment */}
+      <div>
+        <button>Add Assignment</button>
+      </div>
+
+      <Outlet />
     </div>
   )
 }

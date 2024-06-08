@@ -276,7 +276,7 @@ app.get("/getGroups", (req, res) => {
     }
 
     client.query(`select group_id, name, description from groups where teacher_id = ${teacherId}`, (err0, res0) => {
-        if(err0) {
+        if (err0) {
             response.message = "Error in getting groups information";
             res.send(response);
         }
@@ -296,11 +296,58 @@ app.delete("/deleteGroup", (req, res) => {
 
     const groupId = req.query.groupId;
     client.query(`delete from groups where group_id = ${groupId}`, (err0, res0) => {
-        if(!err0) {
+        if (!err0) {
             response.isDeleted = true;
             res.send(response);
         }
-        else {res.send(response)}
+        else { res.send(response) }
+    })
+})
+
+app.get("/getAllStudents", (req, res) => {
+    const response = {
+        isFetched: false
+    }
+
+    const query = `select student_id, name from students where student_id not in (select student_id from student_groups where group_id=${req.query.groupId})`
+
+    client.query(query, (err0, res0) => {
+        if (err0) {
+            response.message = "Error while fetching student details";
+            res.send(response);
+        }
+        else {
+            response.isFetched = true
+            response.students = res0.rows;
+            response.message = "Successfully fetched student details";
+            res.send(response);
+        }
+    })
+})
+
+app.post("/addStudentsToGroup", (req, res) => {
+    const response = {
+        isInserted: false
+    }
+
+    const {groupId, studentsToBeAdded} = req.body;
+    let query = "insert into student_groups (group_id, student_id) values"
+    const len = studentsToBeAdded.length;
+    console.log("Length: " + len);
+    for(let i=0; i<len; i++) {
+        let tempStr = `(${groupId}, ${studentsToBeAdded[i]}),`;
+        query = query.concat(tempStr);
+    }
+    query = query.substring(0, query.length - 1);
+    console.log("Final query: " + query);
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            res.send(response);
+        }
+        else{
+            response.isInserted = true;
+            res.send(response);
+        }
     })
 })
 
