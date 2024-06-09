@@ -330,23 +330,70 @@ app.post("/addStudentsToGroup", (req, res) => {
         isInserted: false
     }
 
-    const {groupId, studentsToBeAdded} = req.body;
+    const { groupId, studentsToBeAdded } = req.body;
     let query = "insert into student_groups (group_id, student_id) values"
     const len = studentsToBeAdded.length;
     console.log("Length: " + len);
-    for(let i=0; i<len; i++) {
+    for (let i = 0; i < len; i++) {
         let tempStr = `(${groupId}, ${studentsToBeAdded[i]}),`;
         query = query.concat(tempStr);
     }
     query = query.substring(0, query.length - 1);
     console.log("Final query: " + query);
     client.query(query, (err0, res0) => {
-        if(err0) {
+        if (err0) {
             res.send(response);
         }
-        else{
+        else {
             response.isInserted = true;
             res.send(response);
+        }
+    })
+})
+
+app.post("/addAssignment", (req, res) => {
+    /**
+     * Firstly, generate assignment ID by adding the max with 1
+     * Then add the assignment in the assignments table
+     * Lastly, update the assignment in group_assignments table
+     */
+    const response = {
+        isInserted: false
+    }
+
+    const { groupId, assignmentName } = req.body;
+
+    let assignmentId = 1;
+    client.query("select max(assignment_id) as maxid from assignments", (err0, res0) => {
+        if (err0) {
+            response.message = "Failed to insert assignment";
+            res.send(response);
+        }
+        else {
+            if (res0.rows[0].maxid !== null) {
+                assignmentId = res0.rows[0].maxid + 1;
+            }
+
+            // 2. Inserting assignment into assignments table
+            client.query(`insert into assignments (assignment_id, assignment_name) values (${assignmentId}, '${assignmentName}')`, (err1, res1) => {
+                if (err1) {
+                    response.message = "Failed to insert assignment";
+                    res.send(response);
+                }
+                else {
+                    client.query(`insert into group_assignments (group_id, assignment_id) values(${groupId}, ${assignmentId})`, (err2, res2) => {
+                        if (err2) {
+                            response.message = "Failed to insert assignment";
+                            res.send(response);
+                        }
+                        else {
+                            response.isInserted = true;
+                            response.message = "Successfully inserted assignment";
+                            res.send(response);
+                        }
+                    })
+                }
+            })
         }
     })
 })

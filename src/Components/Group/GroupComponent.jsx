@@ -34,7 +34,7 @@ export default function GroupComponent() {
 
       {/* Add assignment */}
       <div>
-        <button>Add Assignment</button>
+        <NavLink to={`/group/${groupId}/addAssignment`}>Add Assignment</NavLink>
       </div>
 
       <Outlet />
