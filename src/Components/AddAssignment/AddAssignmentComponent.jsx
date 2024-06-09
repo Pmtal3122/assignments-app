@@ -1,12 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 // import styles from './addAssignmentStyles.module.css';
 
 export default function AddAssignmentComponent() {
     const navigate = useNavigate();
-    const location = useLocation();
     const {groupId} = useParams();
 
     const [assignmentName, setAssignmentName] = useState();

@@ -398,4 +398,26 @@ app.post("/addAssignment", (req, res) => {
     })
 })
 
+app.get("/getAssignmentsOfGroup", (req, res) => {
+    const response = {
+        isFetched: false
+    }
+    
+    const groupId = req.query.groupId;
+    const query = `select assignment_id as assignmentId, assignment_name as assignmentName from assignments where assignment_id in (select assignment_id from group_assignments where group_id=${groupId})`
+    
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            response.message = "Failed to fetch assignment details";
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.message = "Successfully fetched assignment details";
+            response.assignments = res0.rows;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

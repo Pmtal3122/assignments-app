@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 // import styles from './groupComponentStyles.module.css';
@@ -11,9 +13,31 @@ export default function GroupComponent() {
    */
   const location = useLocation();
   const {groupId} = useParams();
+
+  const [assignmentsList, setAssignmentsList] = useState([]);
   useEffect(() => {
     // Get all the assignments
+    const fetchAssignments = async () => {
+      getAssignments();
+    }
+    fetchAssignments();
+
   }, [location])
+
+  async function getAssignments() {
+    await axios.get("http://127.0.0.1:5000/getAssignmentsOfGroup", {
+      params: {
+        groupId: groupId
+      }
+    })
+    .then((res) => {
+      setAssignmentsList(() => res.data.assignments);
+    })
+    .catch((err) => {
+
+    })
+  }
+
   return (
     <div>
       <div>
@@ -26,6 +50,21 @@ export default function GroupComponent() {
         <p>Group Name: {groupData.groupName}</p>
         <p>Group Description: {groupData.groupDescription}</p> */}
       </div>
+
+      {/* Display Assignments */}
+      <h4>Assignments</h4>
+      <ol>
+        {
+          assignmentsList.map(assignment => (
+            <li key={assignment.assignmentid}>
+              <span>{assignment.assignmentid}</span>{"  "}
+              <span>{assignment.assignmentname}</span>
+              <button>View Assignment</button>
+              <button>Remove Assignment</button>
+            </li>
+          ))
+        }
+      </ol>
 
       {/* Add students to the group */}
       <div>
