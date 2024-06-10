@@ -59,7 +59,8 @@ export default function GroupComponent() {
             <li key={assignment.assignmentid}>
               <span>{assignment.assignmentid}</span>{"  "}
               <span>{assignment.assignmentname}</span>
-              <button>View Assignment</button>
+              {/* <button>View Assignment</button> */}
+              <NavLink to={`/group/${groupId}/assignment/${assignment.assignmentid}`}>View assignment</NavLink>
               <button>Remove Assignment</button>
             </li>
           ))

@@ -2,6 +2,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import { NavLink } from 'react-router-dom';
 // import styles from './addStudentsToGroupStyles.module.css';
 
 export default function AddStudentsToGroupComponent() {
@@ -69,16 +70,7 @@ export default function AddStudentsToGroupComponent() {
                     <input type="submit" value={`Add Students to Group ${groupId}`} />
                 </form>
             </div>
-            {/* Students to be added */}
-            <div>
-                <ol>
-                    {
-                        studentsToBeAdded.map((student) => (
-                            <li>{student}</li>
-                        ))
-                    }
-                </ol>
-            </div>
+            <NavLink to={`/group/${groupId}`}>Return</NavLink>
         </div>
     )
 }

@@ -420,4 +420,28 @@ app.get("/getAssignmentsOfGroup", (req, res) => {
     })
 })
 
+app.post("/addQuestion", (req, res) => {
+    const response = {
+        isInserted: false
+    }
+
+    const {question, maxMarks, assignmentId} = req.body;
+    console.log(req.body);
+
+    // Adding the question
+    const query = `insert into questions (question, maxmarks, assignment_id) values ('${question}', ${Number(maxMarks)}, ${Number(assignmentId)})`;
+
+    client.query(query, (err1, res1) => {
+        if(err1) {
+            console.log("Error inserting question");
+            console.log(err1);
+            res.send(response);
+        }
+        else {
+            response.isInserted = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
