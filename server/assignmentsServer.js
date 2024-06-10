@@ -426,7 +426,6 @@ app.post("/addQuestion", (req, res) => {
     }
 
     const {question, maxMarks, assignmentId} = req.body;
-    console.log(req.body);
 
     // Adding the question
     const query = `insert into questions (question, maxmarks, assignment_id) values ('${question}', ${Number(maxMarks)}, ${Number(assignmentId)})`;
@@ -440,6 +439,25 @@ app.post("/addQuestion", (req, res) => {
         else {
             response.isInserted = true;
             res.send(response);
+        }
+    })
+})
+
+app.get("/getQuestionsOfAssignment", (req, res) => {
+    const assignmentId = req.query.assignmentId;
+    const response = {
+        isFetched: false
+    }
+
+    client.query(`select question_id, question, maxmarks from questions where assignment_id = '${assignmentId}'`, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else{
+            response.isFetched = true;
+            response.questions = res0.rows;
+            res.send(response)
         }
     })
 })

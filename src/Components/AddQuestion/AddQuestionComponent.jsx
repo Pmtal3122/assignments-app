@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { NavLink } from 'react-router-dom';
 // import styles from './addComponentStyles.module.css';
 
 export default function AddQuestionComponent() {
@@ -33,6 +34,7 @@ export default function AddQuestionComponent() {
         <input type="number" name="maxMarks" id="maxMarks" value={maxMarks} onChange={event => setMaxMarks(event.target.value)} />
         <input type="submit" value="Add Question" />
       </form>
+      <NavLink to={`/group/${groupId}/assignment/${assignmentId}`}>Return</NavLink>
     </div>
   )
 }
