@@ -462,4 +462,18 @@ app.get("/getQuestionsOfAssignment", (req, res) => {
     })
 })
 
+app.delete("/deleteQuestion", (req, res) => {
+    const response = {
+        isDeleted: false
+    }
+    const questionId = req.body.questionId;
+    client.query(`delete from questions where question_id = ${questionId}`, (err0, res0) => {
+        if(err0) res.send(response);
+        else {
+            response.isDeleted = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
