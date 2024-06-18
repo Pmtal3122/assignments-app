@@ -14,6 +14,7 @@ export default function GroupComponent() {
   const location = useLocation();
   const { groupId } = useParams();
 
+  const [accountType, setAccountType] = useState("");
   const [assignmentsList, setAssignmentsList] = useState([]);
   useEffect(() => {
     // Get all the assignments
@@ -21,7 +22,7 @@ export default function GroupComponent() {
       getAssignments();
     }
     fetchAssignments();
-
+    setAccountType(JSON.parse(localStorage.getItem("accountData")).accountType);
   }, [location])
 
   async function getAssignments() {
@@ -62,23 +63,30 @@ export default function GroupComponent() {
                 <span>{assignment.assignmentid}</span>{"  "}
                 <span>{assignment.assignmentname}</span>
               </NavLink>
-              <button>Remove Assignment</button>
+              {
+                accountType === "Teacher" ?
+                  <button>Remove Assignment</button> : null
+              }
             </li>
           ))
         }
       </ol>
 
-      {/* Add students to the group */}
-      <div>
-        <NavLink to={`/group/${groupId}/addStudentsToGroup`}>Add Students to Group</NavLink>
-      </div>
+      {
+        accountType === "Teacher" ?
+          <div>
+            <div>
+              <NavLink to={`/group/${groupId}/addStudentsToGroup`}>Add Students to Group</NavLink>
+            </div>
+            <div>
+              <NavLink to={`/group/${groupId}/addAssignment`}>Add Assignment</NavLink>
+            </div>
+            <Outlet />
+          </div>
+          : null
+      }
 
-      {/* Add assignment */}
-      <div>
-        <NavLink to={`/group/${groupId}/addAssignment`}>Add Assignment</NavLink>
-      </div>
 
-      <Outlet />
-    </div>
+    </div >
   )
 }

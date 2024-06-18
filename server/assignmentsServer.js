@@ -266,9 +266,9 @@ app.post('/addGroup', (req, res) => {
     })
 })
 
-app.get("/getGroups", (req, res) => {
+app.get("/getGroupsTeacher", (req, res) => {
     console.log("Inside add groups");
-    const teacherId = req.query.teacherId;
+    const teacherId = req.query.accountId;
     console.log(teacherId);
 
     const response = {
@@ -282,6 +282,25 @@ app.get("/getGroups", (req, res) => {
         }
         else {
             console.log(res0.rows);
+            response.groups = res0.rows;
+            response.result = true;
+            res.send(response);
+        }
+    })
+})
+
+app.get("/getGroupsStudent", (req, res) => {
+    const studentId = req.query.accountId;
+    const response = {
+        result: false
+    }
+    const query = `select group_id, name, description from groups where group_id in (select group_id from student_groups where student_id = ${studentId}) order by group_id`;
+    client.query(query, (err0, res0) => {
+        if (err0) {
+            response.message = "Error in getting groups information";
+            res.send(response);
+        }
+        else {
             response.groups = res0.rows;
             response.result = true;
             res.send(response);
@@ -481,7 +500,7 @@ app.get("/getQuestionById", (req, res) => {
         isFetched: false
     }
     const questionId = req.query.questionId;
-    client.query(`select question, maxmarks from questions where question_id = ${questionId}`, (err0, res0) => {
+    client.query(`select question, maxmarks from questions where question_id = ${questionId} order by question_id`, (err0, res0) => {
         if(err0) res.send(response);
         else {
             response.isFetched = true;

@@ -32,7 +32,7 @@ export default function AddQuestionComponent() {
         <textarea name="question" id="question" cols="90" rows="10" value={question} onChange={(event) => setQuestion(event.target.value)}></textarea>
         <label htmlFor="maxMarks">Maximum marks</label>
         <input type="number" name="maxMarks" id="maxMarks" value={maxMarks} onChange={event => setMaxMarks(event.target.value)} />
-        <input type="submit" value="Add Question" />
+        <input type="submit" value="Edit Question" />
       </form>
       <NavLink to={`/group/${groupId}/assignment/${assignmentId}`}>Return</NavLink>
     </div>

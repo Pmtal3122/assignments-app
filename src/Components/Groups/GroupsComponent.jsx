@@ -31,9 +31,10 @@ export default function GroupsComponent() {
   }, [location])
 
   async function getGroups() {
-    await axios.get("http://127.0.0.1:5000/getGroups", {
+    const accountType = JSON.parse(localStorage.getItem("accountData")).accountType;
+    await axios.get(`http://127.0.0.1:5000/getGroups${accountType}`, {
       params: {
-        teacherId: JSON.parse(localStorage.getItem("accountData")).accountId
+        accountId: JSON.parse(localStorage.getItem("accountData")).accountId
       }
     })
       .then((res) => {
@@ -122,7 +123,11 @@ export default function GroupsComponent() {
                   <span>{group.name}</span>
                   <span>{group.description}</span>
                   <button onClick={event => handleGroupClick(event)}>View Group</button>
-                  <button onClick={event => handleGroupDelete(event)}>Delete Group</button>
+                  {
+                    type === "Teacher" ?
+                    <button onClick={event => handleGroupDelete(event)}>Delete Group</button>
+                    : null
+                  }
                 </div>
               </li>
             ))
