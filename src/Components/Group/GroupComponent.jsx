@@ -12,7 +12,7 @@ export default function GroupComponent() {
    * Add students to group
    */
   const location = useLocation();
-  const {groupId} = useParams();
+  const { groupId } = useParams();
 
   const [assignmentsList, setAssignmentsList] = useState([]);
   useEffect(() => {
@@ -30,12 +30,12 @@ export default function GroupComponent() {
         groupId: groupId
       }
     })
-    .then((res) => {
-      setAssignmentsList(() => res.data.assignments);
-    })
-    .catch((err) => {
+      .then((res) => {
+        setAssignmentsList(() => res.data.assignments);
+      })
+      .catch((err) => {
 
-    })
+      })
   }
 
   return (
@@ -57,10 +57,11 @@ export default function GroupComponent() {
         {
           assignmentsList.map(assignment => (
             <li key={assignment.assignmentid}>
-              <span>{assignment.assignmentid}</span>{"  "}
-              <span>{assignment.assignmentname}</span>
               {/* <button>View Assignment</button> */}
-              <NavLink to={`/group/${groupId}/assignment/${assignment.assignmentid}`}>View assignment</NavLink>
+              <NavLink to={`/group/${groupId}/assignment/${assignment.assignmentid}`}>
+                <span>{assignment.assignmentid}</span>{"  "}
+                <span>{assignment.assignmentname}</span>
+              </NavLink>
               <button>Remove Assignment</button>
             </li>
           ))

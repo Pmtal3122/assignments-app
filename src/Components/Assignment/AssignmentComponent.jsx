@@ -48,12 +48,12 @@ export default function AssignmentComponent() {
         questionId: questionId
       }
     })
-    .then(res => {
-      if(res.data.isDeleted === true) navigate(`/group/${groupId}/assignment/${assignmentId}`);
-    })
-    .catch(err => {
+      .then(res => {
+        if (res.data.isDeleted === true) navigate(`/group/${groupId}/assignment/${assignmentId}`);
+      })
+      .catch(err => {
 
-    }) 
+      })
   }
   return (
     <div>
@@ -64,7 +64,9 @@ export default function AssignmentComponent() {
         {
           questions.map(question => (
             <li key={question.question_id}>
-              Name: {question.question}
+              <NavLink to={`/group/${groupId}/assignment/${assignmentId}/editQuestion/${question.question_id}`}>
+                Name: {question.question}
+              </NavLink>
               <span style={{ paddingLeft: "30px" }}></span>
               Maximum marks: {question.maxmarks}
               <span style={{ paddingLeft: "30px" }}></span>

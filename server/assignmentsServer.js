@@ -476,4 +476,33 @@ app.delete("/deleteQuestion", (req, res) => {
     })
 })
 
+app.get("/getQuestionById", (req, res) => {
+    const response = {
+        isFetched: false
+    }
+    const questionId = req.query.questionId;
+    client.query(`select question, maxmarks from questions where question_id = ${questionId}`, (err0, res0) => {
+        if(err0) res.send(response);
+        else {
+            response.isFetched = true;
+            response.question = res0.rows[0];
+            res.send(response);
+        }
+    })
+})
+
+app.put("/editQuestion", (req, res) => {
+    const response = {
+        isUpdated: false
+    }
+    const {questionId, question, maxmarks} = req.body;
+    client.query(`update questions set question = '${question}', maxmarks = ${maxmarks} where question_id = ${questionId}`, (err0, res0) => {
+        if(err0) res.send(response);
+        else {
+            response.isUpdated = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
