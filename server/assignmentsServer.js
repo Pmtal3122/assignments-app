@@ -524,4 +524,41 @@ app.put("/editQuestion", (req, res) => {
     })
 })
 
+app.get("/getAnswersForStudentAndAssignment", (req, res) => {
+    const response = {
+        isFetched: false
+    }
+    const {studentId, assignmentId} = req.query;
+    const query = `select answer_id, answer, marks, question_id from answers where student_id=${studentId} and question_id in (select question_id from questions where assignment_id=${assignmentId})`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.answers = res0.rows;
+            res.send(response);
+        }
+    })
+})
+
+app.post("/addAnswer", (req, res) => {
+    const response = {
+        isInserted: false
+    }
+    const {studentId, answer, questionId} = req.body;
+    const query = `insert into answers (question_id, student_id, answer, marks) values (${questionId}, ${studentId}, '${answer}', 0)`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isInserted = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
