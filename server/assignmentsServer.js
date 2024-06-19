@@ -561,4 +561,54 @@ app.post("/addAnswer", (req, res) => {
     })
 })
 
+app.get("/getAnswersForAssignment", (req, res) => {
+    const response = {isFetched: false}
+    const assignmentId = req.query.assignmentId;
+    const query = `select students.student_id, students.name as student_name, count(answers.student_id) as count from answers inner join students on answers.student_id = students.student_id where answers.question_id in (select question_id from assignments where assignment_id = ${assignmentId}) group by students.student_id`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.answers = res0.rows;
+            res.send(response);
+        }
+    })
+})
+
+app.get("/getAnswersForStudent", (req, res) => {
+    const response = {isFetched: false}
+    const {assignmentId, studentId} = req.query;
+    const query = `select answers.answer_id, answers.answer, answers.marks, answers.checked, questions.question, questions.maxmarks from answers inner join questions on answers.question_id = questions.question_id where answers.question_id in (select question_id from questions where assignment_id = ${assignmentId}) and answers.student_id = ${studentId}`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.answers = res0.rows;
+            res.send(response);
+        }
+    })
+})
+
+app.put("/enterMarks", (req, res) => {
+    const response = {isUpdated: false};
+    const {answerId, marks} = req.body;
+    const query = `update answers set marks = ${marks}, checked = true where answer_id = ${answerId}`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isUpdated = true;
+            res.send(response);
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

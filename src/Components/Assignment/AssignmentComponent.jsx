@@ -18,6 +18,7 @@ export default function AssignmentComponent() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [totalMarks, setTotalMarks] = useState(0);
+  const [obtainedMarks, setObtainedMarks] = useState(0);
   const [accountType, setAccountType] = useState("");
 
   useEffect(() => {
@@ -34,31 +35,37 @@ export default function AssignmentComponent() {
 
   useEffect(() => {
     let answersList = answers;
+    let totalObtained = 0;
     for (let i = 0; i < answersList.length; i++) {
       const ans = document.querySelector(`#Answer${answersList[i].question_id}`);
+      totalObtained += answersList[i].marks;
       if (ans !== null) {
-        ans.disabled = true;
-        ans.value = answersList[i].answer;
-        const ansButton = ans.nextSibling;
-        ansButton.disabled = true;
-        ansButton.innerText = "Submitted";
+        if (ans.disabled === false) {
+          ans.disabled = true;
+          ans.value = answersList[i].answer;
+          const ansButton = ans.nextSibling;
+          ansButton.disabled = true;
+          ansButton.innerText = "Submitted";
 
-        let index = -1;
-        for (let j = 0; j < questions.length; j++) {
-          if (answersList[i].question_id === questions[j].question_id) {
-            index = j;
-            break;
+          let index = -1;
+          for (let j = 0; j < questions.length; j++) {
+            if (answersList[i].question_id === questions[j].question_id) {
+              index = j;
+              break;
+            }
           }
-        }
-        if (index !== -1) {
-          const marksObtained = document.createElement("span");
-          ans.parentNode.append(marksObtained);
-          marksObtained.innerText = `Marks Obtained: ${answersList[i].marks} / ${JSON.stringify(questions[index].maxmarks)}`;
+          if (index !== -1) {
+            const marksObtained = document.createElement("span");
+            ans.parentNode.append(marksObtained);
+            marksObtained.innerText = `Marks Obtained: ${answersList[i].marks} / ${JSON.stringify(questions[index].maxmarks)}`;
 
-          if (answersList[i].marks !== questions[index].maxmarks) ans.style.backgroundColor = "yellow";
+            if (answersList[i].marks !== questions[index].maxmarks) ans.style.color = "yellow";
+            else ans.style.color = "green";
+          }
         }
       }
     }
+    setObtainedMarks(totalObtained);
   }, [answers, questions])
 
   async function getQuestions() {
@@ -128,9 +135,14 @@ export default function AssignmentComponent() {
         {
           questions.map(question => (
             <li key={question.question_id}>
+              {
+                accountType === "Teacher" ?
               <NavLink to={`/group/${groupId}/assignment/${assignmentId}/editQuestion/${question.question_id}`}>
                 {question.question}
               </NavLink>
+              :
+              <span>{question.question}</span>
+              }
               <span style={{ paddingLeft: "30px" }}></span>
               Maximum marks: {question.maxmarks}
               <span style={{ paddingLeft: "30px" }}></span>
@@ -163,7 +175,8 @@ export default function AssignmentComponent() {
                             event.target.parentNode.append(marksObtained);
                             marksObtained.innerText = `Marks Obtained: ${answers[i].marks} / ${JSON.stringify(questions[index].maxmarks)}`;
                             event.target.previousSibling.disabled = true;
-                            if (answers[i].marks !== questions[index].maxmarks) event.target.previousSibling.style.backgroundColor = "yellow";
+                            if (answers[i].marks !== questions[index].maxmarks) event.target.previousSibling.style.color = "yellow";
+                            else event.target.previousSibling.style.color = "green";
                           }
                         }
                         addAnswer(question.question_id, event.target.previousSibling.value);
@@ -176,9 +189,11 @@ export default function AssignmentComponent() {
           ))
         }
       </ol>
-      <span>Total Marks = </span>
       {
-        totalMarks
+        accountType === "Teacher" ?
+        <span>Total Marks = {totalMarks}</span>
+        :
+        <span>Total marks obtained = {obtainedMarks} / {totalMarks}</span>
       }
       <br />
 
@@ -187,6 +202,8 @@ export default function AssignmentComponent() {
           <NavLink to={`/group/${groupId}/assignment/${assignmentId}/addQuestion`}>Add Question</NavLink>
           : null
       }
+
+      <NavLink to={`/group/${groupId}`}>Return</NavLink>
 
 
       <Outlet />

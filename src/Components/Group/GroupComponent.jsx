@@ -63,6 +63,12 @@ export default function GroupComponent() {
                 <span>{assignment.assignmentid}</span>{"  "}
                 <span>{assignment.assignmentname}</span>
               </NavLink>
+              <span style={{paddingLeft: "30px"}}></span>
+              {
+                accountType === "Teacher" ?
+                <NavLink to={`/group/${groupId}/answers/${assignment.assignmentid}`}>View Answers</NavLink> : null
+              }
+              <span style={{paddingLeft: "30px"}}></span>
               {
                 accountType === "Teacher" ?
                   <button>Remove Assignment</button> : null
