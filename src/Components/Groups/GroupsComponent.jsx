@@ -46,16 +46,15 @@ export default function GroupsComponent() {
       })
   }
 
-  function handleGroupClick(event) {
+  function handleGroupClick(event, groupId) {
     // event.target.parentElement.firstChild This is how to get the group id
-    const groupId = event.target.parentElement.firstChild;
-    navigate(`/group/${Number(groupId.innerText)}`)
+    navigate(`/group/${groupId}`)
   }
 
-  function handleGroupDelete(event) {
+  function handleGroupDelete(event, groupId) {
     event.preventDefault();
     setOpenDialog(true);
-    setGroupId(event.target.parentElement.firstChild.innerText);
+    setGroupId(groupId);
   }
 
   async function handleDeleteConfirm() {
@@ -82,18 +81,18 @@ export default function GroupsComponent() {
     right: "0px",
     bottom: "0px",
     // padding: "1rem",
- };
+  };
 
- const confirmButtonStyle = {
-  width: "5rem",
-  height: "1.5rem",
-  fontsize: "1rem",
-  backgroundColor: "grey",
-  color: "black",
-  margin: "5px",
-  borderRadius: "10px",
-  border: "1px solid black",
-};
+  const confirmButtonStyle = {
+    width: "5rem",
+    height: "1.5rem",
+    fontsize: "1rem",
+    backgroundColor: "grey",
+    color: "black",
+    margin: "5px",
+    borderRadius: "10px",
+    border: "1px solid black",
+  };
 
   return (
     <div>
@@ -119,14 +118,16 @@ export default function GroupsComponent() {
             groupsArray.map((group) => (
               <li key={group.group_id} style={{ border: "1px solid red" }}>
                 <div>
-                  <span>{group.group_id}</span>
-                  <span>{group.name}</span>
-                  <span>{group.description}</span>
-                  <button onClick={event => handleGroupClick(event)}>View Group</button>
+                  {/* <span>{group.group_id}</span> */}
+                  <NavLink to={`/groups/editGroup/${group.group_id}`}>
+                    <span>{group.name}</span>
+                    <span>{group.description}</span>
+                  </NavLink>
+                  <button onClick={event => handleGroupClick(event, group.group_id)}>View Group</button>
                   {
                     type === "Teacher" ?
-                    <button onClick={event => handleGroupDelete(event)}>Delete Group</button>
-                    : null
+                      <button onClick={event => handleGroupDelete(event, group.group_id)}>Delete Group</button>
+                      : null
                   }
                 </div>
               </li>

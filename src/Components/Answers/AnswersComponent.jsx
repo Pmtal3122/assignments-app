@@ -1,12 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 // import styles from './answersStyles.module.css';
 
 export default function AnswersComponent() {
     const location = useLocation();
-    const navigate = useNavigate();
 
     const { groupId, assignmentId } = useParams();
 

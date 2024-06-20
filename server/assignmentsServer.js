@@ -275,7 +275,7 @@ app.get("/getGroupsTeacher", (req, res) => {
         result: false
     }
 
-    client.query(`select group_id, name, description from groups where teacher_id = ${teacherId}`, (err0, res0) => {
+    client.query(`select group_id, name, description from groups where teacher_id = ${teacherId} group by group_id`, (err0, res0) => {
         if (err0) {
             response.message = "Error in getting groups information";
             res.send(response);
@@ -303,6 +303,39 @@ app.get("/getGroupsStudent", (req, res) => {
         else {
             response.groups = res0.rows;
             response.result = true;
+            res.send(response);
+        }
+    })
+})
+
+app.get("/getGroupById", (req, res) => {
+    const response = {isFetched: false}
+    const groupId = req.query.groupId;
+    const query = `select name, description from groups where group_id = ${groupId}`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.group = res0.rows[0];
+            res.send(response);
+        }
+    })
+})
+
+app.put("/editGroup", (req, res) => {
+    const response = {isUpdated: false}
+    const {groupId, groupName, groupDescription} = req.body;
+    const query = `update groups set name = '${groupName}', description = '${groupDescription}' where group_id = ${groupId}`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isUpdated = true;
             res.send(response);
         }
     })
