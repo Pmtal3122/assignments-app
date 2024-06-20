@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 // import styles from './removeStudentsFromGroupStyles.module.css';
@@ -11,7 +11,14 @@ export default function RemoveStudentsFromGroupComponent() {
     const navigate = useNavigate();
 
     const [studentsList, setStudentsList] = useState([]);
+    const [query, setQuery] = useState("");
     const studentsToBeRemoved = [];
+
+    const filteredStudentsList = useMemo(() => {
+        return studentsList.filter(student => {
+            return student.name.toLowerCase().includes(query.toLowerCase())
+        })
+    }, [studentsList, query])
 
     useEffect(() => {
         const fetchStudentsInGroup = async () => {
@@ -55,8 +62,9 @@ export default function RemoveStudentsFromGroupComponent() {
         <div>
             <h2>Remove Students from Group</h2>
             <form onSubmit={(event) => handleFormSubmit(event)}>
+                Search: <input type="text" value={query} onChange={event => setQuery(event.target.value)} name="filter" id="filter" />
                 {
-                    studentsList.map(student => (
+                    filteredStudentsList.map(student => (
                         <div key={student.student_id}>
                             <input type="checkbox" name={`student${student.student_id}`} id={`student${student.student_id}`} value={student.student_id} onClick={() => handleStudentListClick(student.student_id)} />
                             <label htmlFor={`student${student.student_id}`}>{student.name}</label>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 // import styles from './addStudentsToGroupStyles.module.css';
@@ -9,9 +9,16 @@ export default function AddStudentsToGroupComponent() {
     const navigate = useNavigate();
     const location = useLocation();
     const [studentsList, setStudentsList] = useState([]);
+    const [query, setQuery] = useState("");
     // const [studentsToBeAdded, setStudentsToBeAdded] = useState([]);
     const studentsToBeAdded = [];
     const { groupId } = useParams();
+
+    const filteredStudentsList = useMemo(() => {
+        return studentsList.filter(student => {
+            return student.name.toLowerCase().includes(query.toLowerCase())
+        })
+    }, [studentsList, query])
 
     useEffect(() => {
         const getStudents = async () => {
@@ -21,7 +28,7 @@ export default function AddStudentsToGroupComponent() {
     }, [location])
 
     async function fetchStudents() {
-        await axios.get("http://127.0.0.1:5000/getAllStudents", {params: {groupId: Number(groupId)}})
+        await axios.get("http://127.0.0.1:5000/getAllStudents", { params: { groupId: Number(groupId) } })
             .then((res) => {
                 setStudentsList(() => res.data.students);
             })
@@ -31,7 +38,7 @@ export default function AddStudentsToGroupComponent() {
     }
 
     function handleStudentListClick(studentId) {
-        if(studentsToBeAdded.includes(studentId)) {
+        if (studentsToBeAdded.includes(studentId)) {
             studentsToBeAdded.splice(studentsToBeAdded.indexOf(studentId), 1);
         }
         else {
@@ -42,16 +49,16 @@ export default function AddStudentsToGroupComponent() {
 
     async function handleFormSubmit(event) {
         event.preventDefault();
-        await axios.post("http://127.0.0.1:5000/addStudentsToGroup", {groupId, studentsToBeAdded})
-        .then((res) => {
-            console.log(res.data);
-            if(res.data.isInserted === true) {
-                navigate(`/group/${groupId}`);
-            }
-        })
-        .catch((err) => {
+        await axios.post("http://127.0.0.1:5000/addStudentsToGroup", { groupId, studentsToBeAdded })
+            .then((res) => {
+                console.log(res.data);
+                if (res.data.isInserted === true) {
+                    navigate(`/group/${groupId}`);
+                }
+            })
+            .catch((err) => {
 
-        })
+            })
     }
 
     return (
@@ -59,10 +66,11 @@ export default function AddStudentsToGroupComponent() {
             <h1>Add Students to Group</h1>
             <div>
                 <form action="" onSubmit={(event => handleFormSubmit(event))}>
+                    Search: <input type="text" value={query} onChange={event => setQuery(event.target.value)} name="" id="" />
                     {
-                        studentsList.map((student) => (
+                        filteredStudentsList.map((student) => (
                             <div key={student.student_id}>
-                                <input type="checkbox" name="student" id="student" value={student.student_id} onClick={() => handleStudentListClick(student.student_id)}/>
+                                <input type="checkbox" name="student" id="student" value={student.student_id} onClick={() => handleStudentListClick(student.student_id)} />
                                 <label htmlFor="student">{student.student_id + " " + student.name}</label>
                             </div>
                         ))
