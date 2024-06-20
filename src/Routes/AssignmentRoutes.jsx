@@ -15,6 +15,7 @@ import EditQuestionComponent from '../Components/EditQuestion/EditQuestionCompon
 import AnswersComponent from '../Components/Answers/AnswersComponent';
 import StudentAnswersComponent from '../Components/StudentAnswers/StudentAnswersComponent';
 import EditGroupComponent from '../Components/EditGroup/EditGroupComponent';
+import RemoveStudentsFromGroupComponent from '../Components/RemoveStudentsFromGroup/RemoveStudentsFromGroupComponent';
 
 
 export default function AssignmentRoutes() {
@@ -27,6 +28,7 @@ export default function AssignmentRoutes() {
         <Route path='/signUp' element={<SignupComponent />} />
         <Route path='/group/:groupId' element={<GroupComponent />}>
           <Route path='addStudentsToGroup' element={<AddStudentsToGroupComponent />} />
+          <Route path='removeStudentsFromGroup' element={<RemoveStudentsFromGroupComponent />} />
           <Route path='addAssignment' element={<AddAssignmentComponent />} />
         </Route>
         <Route path='/group/:groupId/assignment/:assignmentId' element={<AssignmentComponent />}>

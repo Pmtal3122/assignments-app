@@ -85,6 +85,9 @@ export default function GroupComponent() {
               <NavLink to={`/group/${groupId}/addStudentsToGroup`}>Add Students to Group</NavLink>
             </div>
             <div>
+              <NavLink to={`/group/${groupId}/removeStudentsFromGroup`}>Remove Students from Group</NavLink>
+            </div>
+            <div>
               <NavLink to={`/group/${groupId}/addAssignment`}>Add Assignment</NavLink>
             </div>
             <Outlet />

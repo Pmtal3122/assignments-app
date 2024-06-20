@@ -377,6 +377,23 @@ app.get("/getAllStudents", (req, res) => {
     })
 })
 
+app.get("/getStudentsInGroup", (req, res) => {
+    const response = {isFetched: false};
+    const groupId = req.query.groupId;
+    const query = `select student_id, name from students where student_id in (select student_id from student_groups where group_id=${groupId})`;
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isFetched = true;
+            response.students = res0.rows;
+            res.send(response);
+        }
+    })
+})
+
 app.post("/addStudentsToGroup", (req, res) => {
     const response = {
         isInserted: false
@@ -398,6 +415,25 @@ app.post("/addStudentsToGroup", (req, res) => {
         }
         else {
             response.isInserted = true;
+            res.send(response);
+        }
+    })
+})
+
+app.post("/removeStudentsFromGroup", (req, res) => {
+    const response = {isDeleted: false};
+    const {groupId, studentsToBeRemoved} = req.body;
+    let query = `delete from student_groups where group_id = ${groupId} and student_id in (`;
+    for(let i=0; i<studentsToBeRemoved.length; i++) query = query + studentsToBeRemoved[i] + ",";
+    query = query.substring(0, query.length - 1) + ")";
+
+    client.query(query, (err0, res0) => {
+        if(err0) {
+            console.log(err0);
+            res.send(response);
+        }
+        else {
+            response.isDeleted = true;
             res.send(response);
         }
     })
