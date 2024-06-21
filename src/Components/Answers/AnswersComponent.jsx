@@ -41,7 +41,7 @@ export default function AnswersComponent() {
                     answersList.map(answer => (
                         <li key={answer.student_id}>
                             <NavLink to={`/group/${groupId}/answers/${assignmentId}/studentAnswers/${answer.student_id}`}>
-                                <span>{answer.student_name}</span>
+                                <span>{answer.student_name + "   " + answer.department + "   " + answer.roll_no}</span>
                                 <span style={{ paddingLeft: "30px" }}></span>
                                 <span>({answer.count})</span>
                             </NavLink>

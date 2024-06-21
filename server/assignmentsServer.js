@@ -636,7 +636,7 @@ app.post("/addAnswer", (req, res) => {
 app.get("/getAnswersForAssignment", (req, res) => {
     const response = {isFetched: false}
     const assignmentId = req.query.assignmentId;
-    const query = `select students.student_id, students.name as student_name, count(answers.student_id) as count from answers inner join students on answers.student_id = students.student_id where answers.question_id in (select question_id from assignments where assignment_id = ${assignmentId}) group by students.student_id`;
+    const query = `select students.student_id, students.name as student_name, students.department as department, students.roll_no as roll_no, count(answers.student_id) as count from answers inner join students on answers.student_id = students.student_id where answers.question_id in (select question_id from assignments where assignment_id = ${assignmentId}) group by students.student_id`;
     client.query(query, (err0, res0) => {
         if(err0) {
             console.log(err0);
