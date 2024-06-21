@@ -61,12 +61,30 @@ export default function AddStudentsToGroupComponent() {
             })
     }
 
+    function handleSelectAll(event) {
+        event.preventDefault();
+        const inputs = document.querySelectorAll("input#student");
+        let flag = false;
+        for(let i=0; i<inputs.length; i++) {
+            if(inputs[i].checked === false) {
+                flag = true;
+                break;
+            }
+        }
+        inputs.forEach(input => {
+            if(flag===true && input.checked===false) studentsToBeAdded.push(input.value);
+            else if(flag===false && input.checked===true) studentsToBeAdded.splice(studentsToBeAdded.indexOf(input.value), 1);
+            input.checked = flag;
+        })
+    }
+
     return (
         <div>
             <h1>Add Students to Group</h1>
             <div>
                 <form action="" onSubmit={(event => handleFormSubmit(event))}>
                     Search: <input type="text" value={query} onChange={event => setQuery(event.target.value)} name="" id="" />
+                    <button onClick={(event) => handleSelectAll(event)}>Select All</button>
                     {
                         filteredStudentsList.map((student) => (
                             <div key={student.student_id}>

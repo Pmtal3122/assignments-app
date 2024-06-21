@@ -58,15 +58,33 @@ export default function RemoveStudentsFromGroupComponent() {
 
     }
 
+    function handleSelectAll(event) {
+        event.preventDefault();
+        const inputs = document.querySelectorAll("input#student");
+        let flag = false;
+        for(let i=0; i<inputs.length; i++) {
+            if(inputs[i].checked === false) {
+                flag = true;
+                break;
+            }
+        }
+        inputs.forEach(input => {
+            if(flag===true && input.checked===false) studentsToBeRemoved.push(input.value);
+            else if(flag===false && input.checked===true) studentsToBeRemoved.splice(studentsToBeRemoved.indexOf(input.value), 1);
+            input.checked = flag;
+        })
+    }
+
     return (
         <div>
             <h2>Remove Students from Group</h2>
             <form onSubmit={(event) => handleFormSubmit(event)}>
                 Search: <input type="text" value={query} onChange={event => setQuery(event.target.value)} name="filter" id="filter" />
+                <button onClick={(event) => handleSelectAll(event)}>Select All</button>
                 {
                     filteredStudentsList.map(student => (
                         <div key={student.student_id}>
-                            <input type="checkbox" name={`student${student.student_id}`} id={`student${student.student_id}`} value={student.student_id} onClick={() => handleStudentListClick(student.student_id)} />
+                            <input type="checkbox" name={`student${student.student_id}`} id="student" value={student.student_id} onClick={() => handleStudentListClick(student.student_id)} />
                             <label htmlFor={`student${student.student_id}`}>{student.name + "\t" + student.department + "\t" + student.roll_no}</label>
                         </div>
                     ))
