@@ -364,7 +364,7 @@ app.get("/getAllStudents", (req, res) => {
         isFetched: false
     }
 
-    const query = `select student_id, name from students where student_id not in (select student_id from student_groups where group_id=${req.query.groupId})`
+    const query = `select student_id, name, department, roll_no from students where student_id not in (select student_id from student_groups where group_id=${req.query.groupId})`
 
     client.query(query, (err0, res0) => {
         if (err0) {
@@ -383,7 +383,7 @@ app.get("/getAllStudents", (req, res) => {
 app.get("/getStudentsInGroup", (req, res) => {
     const response = {isFetched: false};
     const groupId = req.query.groupId;
-    const query = `select student_id, name from students where student_id in (select student_id from student_groups where group_id=${groupId})`;
+    const query = `select student_id, name, department, roll_no from students where student_id in (select student_id from student_groups where group_id=${groupId})`;
     client.query(query, (err0, res0) => {
         if(err0) {
             console.log(err0);

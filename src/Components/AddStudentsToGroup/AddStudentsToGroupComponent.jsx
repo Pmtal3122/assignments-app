@@ -16,7 +16,7 @@ export default function AddStudentsToGroupComponent() {
 
     const filteredStudentsList = useMemo(() => {
         return studentsList.filter(student => {
-            return student.name.toLowerCase().includes(query.toLowerCase())
+            return student.name.toLowerCase().includes(query.toLowerCase()) || student.department.toLowerCase().includes(query.toLowerCase()) || student.roll_no.toString().includes(query.toLowerCase())
         })
     }, [studentsList, query])
 
@@ -71,7 +71,7 @@ export default function AddStudentsToGroupComponent() {
                         filteredStudentsList.map((student) => (
                             <div key={student.student_id}>
                                 <input type="checkbox" name="student" id="student" value={student.student_id} onClick={() => handleStudentListClick(student.student_id)} />
-                                <label htmlFor="student">{student.student_id + " " + student.name}</label>
+                                <label htmlFor="student">{student.name + "\t" + student.department + "\t" + student.roll_no}</label>
                             </div>
                         ))
                     }
