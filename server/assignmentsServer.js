@@ -71,6 +71,8 @@ app.get('/signUpStudent', async (req, res) => {
     const loginData = req.query.loginData;
 
     let name = loginData.name;
+    let department = loginData.department;
+    let rollNo = loginData.rollNo;
     let email = loginData.email;
     let pwd = loginData.password;
 
@@ -86,7 +88,7 @@ app.get('/signUpStudent', async (req, res) => {
                 res.send(`<p>Account present</p>`);
             }
             else {
-                const query = `insert into students (name, email, password) values('${name}', '${email}', '${password}')`;
+                const query = `insert into students (name, department, roll_no, email, password) values('${name}', '${department}', ${rollNo}, '${email}', '${password}')`;
                 client.query(query, (err, resp) => {
                     if (!err) {
                         console.log("Insertion of student account successful");
@@ -105,6 +107,7 @@ app.get('/signUpTeacher', async (req, res) => {
     const loginData = req.query.loginData;
 
     let name = loginData.name;
+    let department = loginData.department;
     let email = loginData.email;
     let pwd = loginData.password;
 
@@ -119,7 +122,7 @@ app.get('/signUpTeacher', async (req, res) => {
                 res.send(`<p>Account already present</p>`);
             }
             else {
-                const query = `insert into teachers (name, email, password) values('${name}', '${email}', '${password}')`;
+                const query = `insert into teachers (name, department, email, password) values('${name}', '${department}', '${email}', '${password}')`;
                 client.query(query, (err, resp) => {
                     if (!err) {
                         console.log("Insertion of student account successful");
